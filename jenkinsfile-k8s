@@ -24,7 +24,7 @@ pipeline {
         stage('version') {
             steps {
                 sh 'cat /etc/os-release'
-                sh 'who'
+                sh 'whoami'
             }
         }
         stage('Build Docker Image') {
