@@ -28,11 +28,6 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'harbor_id'
     }
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-                }
-            }
         stage('Build Docker Image') {
             steps {
                 container('docker') {
