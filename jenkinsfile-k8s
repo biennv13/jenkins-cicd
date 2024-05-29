@@ -28,6 +28,12 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'harbor_id'
     }
     stages {
+        stage('version') {
+            steps {
+                sh 'docker --version'
+                sh 'sleep 50'
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 container('docker') {
