@@ -28,11 +28,16 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'harbor_id'
     }
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                }
+            }
         stage('Build Docker Image') {
             steps {
                 container('docker') {
                     script {
-                        docker.build("${env.IMAGE_NAME}:${BUILD_NUMBER}")
+                        dockerImage = docker.build("${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${BUILD_NUMBER}")
                     }
                 }
             }
@@ -40,9 +45,9 @@ pipeline {
         stage('Push to Harbor') {
             steps {
                 container('docker') {
-                    withDockerRegistry([credentialsId: "${env.DOCKER_CREDENTIALS_ID}", url: "https://${env.HARBOR_URL}"]) {
                         script {
-                            docker.image("${env.IMAGE_NAME}:${BUILD_NUMBER}").push()
+                            docker.withRegistry("https://${HARBOR_URL}", "${DOCKER_CREDENTIALS_ID}") {
+                                dockerImage.push()
                         }
                     }
                 }
