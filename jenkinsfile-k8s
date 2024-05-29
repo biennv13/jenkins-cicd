@@ -6,17 +6,25 @@ pipeline {
             kind: Pod
             spec:
               containers:
-              - name: docker
-                image: docker:18.06.1
-                command: ["tail", "-f", "/dev/null"]
+              - name: kaniko
+                image: gcr.io/kaniko-project/executor:v1.6.0-debug
                 imagePullPolicy: Always
+                command:
+                - sleep
+                args:
+                - 99d
                 volumeMounts:
-                - name: docker
-                  mountPath: /var/run/docker.sock # We use the k8s host docker engine
+                  - name: jenkins-docker-cfg
+                    mountPath: /kaniko/.docker
               volumes:
-              - name: docker
-                hostPath:
-                  path: /var/run/docker.sock                  
+              - name: jenkins-docker-cfg
+                projected:
+                  sources:
+                  - secret:
+                      name: regcred
+                      items:
+                        - key: .dockerconfigjson
+                          path: config.json                 
             """
         }
     }
@@ -33,11 +41,10 @@ pipeline {
                 sh 'whoami'
             }
         }
-        stage('Build Docker Image') {
+        stage('Build Docker Image with Kaniko ') {
             steps {
-                container('docker') {
-                    script {
-                        dockerImage = docker.build("${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${BUILD_NUMBER}")
+                container('kaniko') {
+                     sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination='${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${BUILD_NUMBER}''
                     }
                 }
             }
