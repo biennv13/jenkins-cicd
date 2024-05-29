@@ -24,7 +24,7 @@ pipeline {
         stage('version') {
             steps {
                 sh 'cat /etc/os-release'
-                sh 'sleep 50'
+                sh 'who'
             }
         }
         stage('Build Docker Image') {
