@@ -48,7 +48,6 @@ pipeline {
                     }
                 }
             }
-        }
         stage('Push to Harbor') {
             steps {
                 container('docker') {
