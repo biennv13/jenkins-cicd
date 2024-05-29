@@ -29,7 +29,8 @@ pipeline {
     stages {
         stage('version') {
             steps {
-                sh 'docker --version'
+                sh 'ls -la'
+                sh 'whoami'
             }
         }
         stage('Build Docker Image') {
