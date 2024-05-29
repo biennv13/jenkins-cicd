@@ -7,17 +7,10 @@ pipeline {
             spec:
               containers:
               - name: docker
-                image: docker:dind
+                image: ubuntu:focal-20240427
                 command:
                 - cat
                 tty: true
-                volumeMounts:
-                - name: docker-socket
-                  mountPath: /var/run/docker.sock
-              volumes:
-              - name: docker-socket
-                hostPath:
-                  path: /var/run/docker.sock
             """
         }
     }
@@ -30,7 +23,7 @@ pipeline {
     stages {
         stage('version') {
             steps {
-                sh 'docker --version'
+                sh 'cat /etc/os-release'
                 sh 'sleep 50'
             }
         }
